@@ -183,7 +183,7 @@ def sync_charge_from_stripe_data(data):
     """
     obj, _ = models.Charge.objects.get_or_create(stripe_id=data["id"])
     obj.customer = models.Customer.objects.filter(stripe_id=data["customer"]).first()
-    obj.source = data["source"]["id"]
+    obj.source = data["source"]["id"] if data.get("source") else data.get('payment_method')
     obj.currency = data["currency"]
     obj.invoice = models.Invoice.objects.filter(stripe_id=data["invoice"]).first()
     obj.amount = utils.convert_amount_for_db(data["amount"], obj.currency)
